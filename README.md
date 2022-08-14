@@ -1,46 +1,27 @@
-# Fancybox
-![](https://flarum-badge-api.davwheat.dev/v1/compat-latest/darkle/fancybox) [![Total Downloads](http://poser.pugx.org/darkle/fancybox/downloads)](https://packagist.org/packages/darkle/fancybox) [![Latest Stable Version](http://poser.pugx.org/darkle/fancybox/v)](https://packagist.org/packages/darkle/fancybox) [![License](http://poser.pugx.org/darkle/fancybox/license)](https://packagist.org/packages/darkle/fancybox)
-
+# Table of Content
 ![Screenshot](https://user-images.githubusercontent.com/15818451/145828827-e272f2e2-3781-4eea-9e4a-3e5aa8077920.gif)
+"A Flarum extension.  Automaticallly generate a catalogue for your posts. Also includes a BBCode: [anchor=anchorname] - whitch allows you to insert a anchor in your posts whitch can be jump to, besides h1-h6. Moreover, add a fancy lightblue indicator bar to your titles."
 
 ## Getting Started
 
 In order to install the extension, you will need to follow these simple steps.
 
-### 🔃 Cross-compatibility
-- [`reflar/recache`](https://extiverse.com/extension/reflar/recache) ✅
-- [`fof/reactions`](https://github.com/FriendsOfFlarum/reactions) ✅
-- [`datitisev/flarum-post-galleries`](https://github.com/datitisev/flarum-post-galleries) ⌛(https://github.com/iamdarkle/fancybox/issues/6)
-- [`v17development/flarum-support`](https://extiverse.com/extension/v17development/flarum-support) ⌛(https://github.com/iamdarkle/fancybox/issues/5)
 
 ### ⚠️ Minimum Requirements
 
-* <a href="https://flarum.org">flarum/core</a> 1.0.0
+* <a href="https://flarum.org">flarum/core</a> 1.2.0
 
 ### 📥 Installation
    ```
-   composer require darkle/fancybox
+   composer require tohsakarat/table-of-content
    ```
 
 ### ♻ Updating
    ```
-   composer update darkle/fancybox
+   composer update tohsakarat/table-of-content
    php flarum cache:clear
    ```
 
-## License
-
-Fancybox v4 is licensed under the Fancyapps UI license for all applications. You can test Fancyapps UI components for free in your project in a development and staging environment to see if it fits your needs, then you must purchase a license from [here](https://fancyapps.com/pricing).
-
-* darkle/fancybox - [MIT License](https://github.com/iamdarkle/fancybox/blob/main/LICENSE)
-* Fancybox v4 (You need a Fancybox license for both non-commercial and commercial use) - [Fancyapps UI license](https://fancyapps.com/license)
-
 ## Useful Links
 
-* [Fancyapps Web](https://fancyapps.com/)
-* [Fancyapps GitHub](https://github.com/fancyapps/ui)
-* [Flarum](https://flarum.org)
-* [Flarum Community](https://discuss.flarum.org/d/29102-fancybox)
-* [GitHub](https://github.com/iamdarkle/fancybox)
-* [Packagist](https://packagist.org/packages/darkle/fancybox)
-* [Composer](https://getcomposer.org/)# flarum-table-of-content
+* [GitHub](https://github.com/tohsakrat/flarum-table-of-content)

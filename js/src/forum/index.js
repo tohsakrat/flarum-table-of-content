@@ -148,6 +148,8 @@ app.initializers.add('mypost', () => {
 
       
         try{
+         if(app.current.data.stream.posts().find(u=>u.data?.id==app.current.data.stream.posts()[Math.floor(app.current.data.stream.index-app.current.data.stream.visibleStart)-1>0?Math.floor(app.current.data.stream.index-app.current.data.stream.visibleStart)-1:0].data?.id)
+        .catalog?.content.length) vnode.children.push(<div class='catalog-icon-mobile'></div>)
         vnode.children.push(<div class='catalog-top'>
             {app.current.data.stream.posts().find(u=>u.data?.id==app.current.data.stream.posts()[Math.floor(app.current.data.stream.index-app.current.data.stream.visibleStart)-1>0?Math.floor(app.current.data.stream.index-app.current.data.stream.visibleStart)-1:0].data?.id)
            .catalog?.content}
@@ -187,7 +189,7 @@ app.initializers.add('mypost', () => {
         DiscussionPageResolver.scrollToPostNumber = null;
       }
   
-      return this.__proto__.__proto__.render(vnode);
+      return this.__proto__.__proto__.render.call(this,vnode);
     })
 
 
@@ -255,7 +257,33 @@ app.initializers.add('mypost', () => {
     })
 
 
-    
+    /**
+   * When the posts that are visible in the post stream change (i.e. the user
+   * scrolls up or down), then we update the URL and mark the posts as read.
+   */
+
+    override(DiscussionPage.prototype, 'positionChanged', function(original,startNumber, endNumber){
+    const discussion = this.discussion;
+
+    if (!discussion) return;
+
+    // Construct a URL to this discussion with the updated position, then
+    // replace it into the window's history and our own history stack.
+    const url = app.route.discussion(discussion, (this.near = startNumber))+(window.location.hash.substr(1).split('-')[0]==this.near?window.location.hash:'');
+
+    window.history.replaceState(null, document.title, url);
+    app.history.push('discussion', discussion.title());
+
+    // If the user hasn't read past here before, then we'll update their read
+    // state and redraw.
+    if (app.session.user && endNumber > (discussion.lastReadPostNumber() || 0)) {
+      discussion.save({ lastReadPostNumber: endNumber });
+      m.redraw();
+    }
+  });
+  
+  
+  
 
 
     window.updateCatalogTop=()=>{

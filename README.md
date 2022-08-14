@@ -4,9 +4,7 @@
  
 ![Image description](https://gzszd.club/assets/files/2022-08-14/1660447468-988401-image.png) 
  
- 
 ![Image description](https://gzszd.club/assets/files/2022-08-14/1660448329-377736-image.png) 
-
 
 "A Flarum extension.  Automaticallly generate a catalogue for your posts. Also includes a BBCode: [anchor=anchorname] - whitch allows you to insert a anchor in your posts whitch can be jump to, besides h1-h6. Moreover, add a fancy lightblue indicator bar to your titles."
 

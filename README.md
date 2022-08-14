@@ -43,4 +43,4 @@ Fancybox v4 is licensed under the Fancyapps UI license for all applications. You
 * [Flarum Community](https://discuss.flarum.org/d/29102-fancybox)
 * [GitHub](https://github.com/iamdarkle/fancybox)
 * [Packagist](https://packagist.org/packages/darkle/fancybox)
-* [Composer](https://getcomposer.org/)
+* [Composer](https://getcomposer.org/)# flarum-table-of-content

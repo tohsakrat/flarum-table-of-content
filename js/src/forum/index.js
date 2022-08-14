@@ -148,6 +148,10 @@ app.initializers.add('mypost', () => {
 
       
         try{
+            
+                  if(app.current.data.stream.posts().find(u=>u.data?.id==app.current.data.stream.posts()[Math.floor(app.current.data.stream.index-app.current.data.stream.visibleStart)-1>0?Math.floor(app.current.data.stream.index-app.current.data.stream.visibleStart)-1:0].data?.id)
+           .catalog?.content.length) vnode.children.push(<div class='catalog-icon-mobile'></div>)
+           
         vnode.children.push(<div class='catalog-top'>
             {app.current.data.stream.posts().find(u=>u.data?.id==app.current.data.stream.posts()[Math.floor(app.current.data.stream.index-app.current.data.stream.visibleStart)-1>0?Math.floor(app.current.data.stream.index-app.current.data.stream.visibleStart)-1:0].data?.id)
            .catalog?.content}

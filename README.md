@@ -1,5 +1,11 @@
 # Table of Content
-![Screenshot](https://user-images.githubusercontent.com/15818451/145828827-e272f2e2-3781-4eea-9e4a-3e5aa8077920.gif)
+ 
+![Image description](https://gzszd.club/assets/files/2022-08-14/1660447427-922182-image.png) 
+ 
+![Image description](https://gzszd.club/assets/files/2022-08-14/1660447468-988401-image.png) 
+ 
+![Image description](https://gzszd.club/assets/files/2022-08-14/1660447907-434236-image.png) 
+
 "A Flarum extension.  Automaticallly generate a catalogue for your posts. Also includes a BBCode: [anchor=anchorname] - whitch allows you to insert a anchor in your posts whitch can be jump to, besides h1-h6. Moreover, add a fancy lightblue indicator bar to your titles."
 
 ## Getting Started
@@ -9,7 +15,7 @@ In order to install the extension, you will need to follow these simple steps.
 
 ### ⚠️ Minimum Requirements
 
-* <a href="https://flarum.org">flarum/core</a> 1.2.0
+flarum/core 1.2.0
 
 ### 📥 Installation
    ```

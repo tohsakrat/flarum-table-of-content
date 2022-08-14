@@ -1,3 +1,75 @@
+@keyframes fadeOutLeft {
+    0% {
+        opacity: 1
+    }
+
+    to {
+        opacity: 0;
+        -webkit-transform: translate3d(-100%,0,0);
+        transform: translate3d(-100%,0,0)
+    }
+}
+@keyframes fadeInLeft {
+    0% {
+        opacity: 0;
+        -webkit-transform: translate3d(-100%,0,0);
+        transform: translate3d(-100%,0,0)
+    }
+
+    to {
+        opacity: 1;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0)
+    }
+}
+@keyframes fadeOutRight {
+    0% {
+        opacity: 1
+    }
+
+    to {
+        opacity: 0;
+        -webkit-transform: translate3d(100%,0,0);
+        transform: translate3d(100%,0,0)
+    }
+}
+
+@keyframes fadeInRight {
+    0% {
+        opacity: 0;
+        -webkit-transform: translate3d(100%,0,0);
+        transform: translate3d(100%,0,0)
+    }
+
+    to {
+        opacity: 1;
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0)
+    }
+}
+@keyframes breath {
+    0% {
+        opacity: .2;
+    }
+
+    60% {
+        opacity: 1;
+    }
+
+    to {
+        opacity: .2;
+    }
+}
+@keyframes flash {
+    0%,50%,to {
+        opacity: 1
+    }
+
+    25%,75% {
+        opacity: 0
+    }
+}
+
 .catalog-icon-mobile:before {
 animation: 2s infinite ease-in-out breath;
     content: '\f02d';
@@ -124,7 +196,7 @@ animation: 2s infinite ease-in-out breath;
     -webkit-background-clip: text;
     background-clip: text;
     display: inline-block;
-    animation: breath 2s infinite ease-in-out both;
+    animation: breath 2s 10 ease-in-out both;
 }
 
 .anchor {
@@ -270,6 +342,7 @@ a[data-tag="H6"]:before {
         /* right: 0px; */
      transition: 1s;
     justify-content: center;
+    margin-top: -2em;
     }
   }
 

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of iamdarkle/fancybox
+ * This file is part of tohsakarat/table-of-content
  *
  * Copyright (c) 2022 Tomás Romero.
  *
@@ -10,7 +10,7 @@
  */
 
 use Flarum\Extend;
-
+use s9e\TextFormatter\Configurator;
 return [
     (new Extend\Frontend('forum'))
         ->js(__DIR__.'/js/dist/forum.js')

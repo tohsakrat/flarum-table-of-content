@@ -324,7 +324,7 @@ app.initializers.add('mypost', () => {
      app.current.data.stream.progress=Math.floor((app.current.data.stream.index-Math.floor(app.current.data.stream.index))*100) 
      if(!footer)return;
      footer.innerText=app.current.data.stream.progress+'%'  
-      //m.redraw();
+      m.redraw();
       
      
      if(app.current.data.stream.progress>100-app.current.data.stream.percentScreenPost || app.current.data.stream.progress<app.current.data.stream.percentScreenPost){

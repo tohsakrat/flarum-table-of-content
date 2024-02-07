@@ -70,7 +70,14 @@
     }
 }
 
-
+@keyframes flip {
+  from {
+    transform: scale(-0.9,1);
+  }
+  to {
+    transform: scale(-1,1);
+  }
+}
 
 
 .Post-body :is(h1,h2,h3,h4,h5,h6):before {
@@ -88,7 +95,6 @@
 }
 
 .title-anchor:target+.title-sub-anchor:before {
-    /* content: ''; */
     content: '';
     display: inline-block;
     width: 1.5em;
@@ -114,7 +120,9 @@
 }
     
 .catalog-top:not(:empty){
-        animation: 1s 1 ease-in-out fadeInRight;
+      //transition: opacity 1s ease-in, transform 0.5s ease-out;
+      //  animation:  ease-in-out 1s 1 fadeInLeft, ease-in-out flip 1s 1 ;
+        z-index: var(--zindex-header);
 }
     
 }
@@ -244,7 +252,7 @@ a[data-tag] {
 }
 
 @media @desktop-hd {
- 
+ left: var(--paddingLeftRight);
 
     display: flex;
     flex-direction: column;
@@ -256,13 +264,29 @@ a[data-tag] {
     border-left: 1px var(--control-catagory-color) dotted;
     --control-catagory-color: rgba(128,208,199,0.8);
     padding-left: 0.5em;
+        max-height: 75vh;
+    overflow-y: scroll;
+    transform: scale(-1,1);
+    padding: 1em;
+    
+    p{
+        transform: scale(-1,1);
+    }
 }
 
 }
 
 
 
+div#app.panePinned .DiscussionPage-list+.DiscussionPage-discussion .catalog-top{
 
+        
+        left: ~"calc(var(--paddingLeftRight) + var(--pane-width));"
+        
+    
+    
+    
+}
 
 
 
@@ -319,12 +343,13 @@ a[data-tag="H6"]:before {
     left: -70vw!important;
     animation: 1s 1 ease-in-out fadeOutLeft
     }
-  
+
     .catalog-top:not(:empty) {
     animation: 1s 1 ease-in-out fadeInLeft;
     left: 0px;
     }
     .catalog-top {
+        
     display: flex;
     align-items: flex-start;
     flex-wrap: wrap;
@@ -373,7 +398,9 @@ aside.Post-actions {
     bottom: 0.5em;
     background: var(--body-bg);
     border-radius: 2em;
-    padding: 0 1em;
+  padding:0 1em 0 1.5em;
 opacity: 0.5;
 }
-
+.catalog-top:empty {
+    display: none!important;
+}

@@ -15,23 +15,29 @@ app.initializers.add('mypost', () => {
       return str.replace( reg ,'-').replaceAll(' ','-');
   }
 
-  //console.log(this)
- // if(!this.element)return items
- 
-  let inPageLink=Array.prototype.slice.call(this.element.querySelectorAll('a[target="_self"]'))
+ //这一段母的是把页面内指向同一个discussion的链接改为跳转到楼层，这样就不用重载整个页面
+  let inPageLink=Array.prototype.slice.call(this.element.querySelectorAll('a'))
   
      inPageLink.forEach((e)=>{
-      if(e.href.indexOf(window.location.href.split('/').splice(0,4).join('/'))!=-1)e.onclick=(w)=>{
-      
-      w.preventDefault();
-      
-     app.current.data.stream.goToNumber(e.href.split('/')[5].split('#')[0]).then(()=>{
+      let curDiscussionRoute=window.location.href.replace("https://",'').split('/').splice(0,3).join('/');
+      if(e.href.indexOf(curDiscussionRoute)!=-1)e.onclick=(w)=>{
+        //如果链接指向的是当前页面的同一个discussion，就不要重载页面了
+        let goTo=e.href.split('/')[5].split('#')[0];
+        console.log('点击了链接,即将前往楼层'+goTo);
+        w.preventDefault();  
+        if(Math.floor(app.current.data.stream.number)==goTo){
+          //如果和当前所在楼层相同，就不要滚动了
+          console.log('当前所在楼层和目标楼层相同，不滚动');
+          window.location.hash  =  '#'+ e.href.split('#')[1];
+        return;}
+        app.current.data.stream.goToNumber(goTo).then(()=>{
+                console.log('goto完毕');
+              
     		  if(e.href.split('/')[5])setTimeout(()=>{
-    			//console.log(a)
-    		  window.location.hash  =  '#'+ e.href.split('#')[1];
-    		  setTimeout(()=>{ m.redraw();},100)
-    		},500)}
-    		)
+            window.location.hash  =  '#'+ e.href.split('#')[1];
+            setTimeout(()=>{ m.redraw();},100)
+    		  },500)}
+      	)
       return false;
       
       }
@@ -40,26 +46,18 @@ app.initializers.add('mypost', () => {
     })
  
  
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+ //这一段开始，是生成目录
+
+ //先把所有标题找出来
   let elements1=Array.prototype.slice.call(this.element.querySelectorAll('.Post-body :is(h1, h2, h3, h4, h5, h6)'))
   
-  
   elements1.forEach((e,i)=>{
+    //这一段是给标题加上锚点，以及给锚点加上id
+    //不直让标题本身作为滚动id是因为，这样不会让标题本身滚动到屏幕中间，而是顶部
     let anchor=e
     while(1){
-    anchor = anchor.parentNode
-    if(anchor.dataset.number)break
+      anchor = anchor.parentNode
+      if(anchor.dataset.number)break
     }
     e.innerHTML='<span class="title-anchor"></span>'+ '<span class="title-sub-anchor">'+ e.innerHTML+'</span>'; 
    //e.id=
@@ -69,22 +67,24 @@ app.initializers.add('mypost', () => {
     e.querySelector('.title-sub-anchor').id = e.dataset.id;
    
   })
+
+  //这一段是生成目录
   this.catalog={}
   this.catalog.id=this.attrs.post.data.id
-  
-  app.current.data.stream.posts().find(u=>u.data.id== this.catalog.id).catalog=this.catalog
-  this.catalog.elements=Array.prototype.slice.call(this.element.querySelectorAll('.Post-body :is(h1, h2, h3, h4, h5, h6,.sub-anchor)'))
+  app.current.data.stream.posts().find(u=>u.data.id== this.catalog.id).catalog=this.catalog//把目录加到stream数据模型对应的post里面去
+  this.catalog.elements=elements1
+
   this.catalog.content=this.catalog.elements.map(
       (e)=>{
-        
+        //这一段是通过标题数组的数据模型，生成目录的html
         let isAnchor=Array(e.classList).map(e=>e.value).indexOf('sub-anchor')!=-1
         let id=isAnchor? e.id : e.dataset.id
-       let link=     window.location.origin+'/d/'+this.attrs.post.data.relationships.discussion.data.id + '/'+this.attrs.post.data.attributes.number+'#'+id
+        let link= window.location.origin+app.route.discussion(app.current.data.discussion,this.attrs.post.data.attributes.number)+'#'+id;
+       
         let a=<p> <a
         href={link}
         target='_self'
         data-number={this.attrs.post.data.attributes.number}
-        
         data-isAnchor={isAnchor}
         data-id={id}
         data-tag={e.tagName}
@@ -96,51 +96,17 @@ app.initializers.add('mypost', () => {
                 //console.log(a)
               window.location.hash  =  '#'+ id;
                setTimeout(()=>{ m.redraw();},100)
-            },250)}
+            },500)}
             )
             return false;
           }
         }
         >{e.innerText+'\n'}</a></p>
-    
-       
-      
-       // a= document.createTextNode(a)
-       // console.log('#'+e.dataset.id)
-       
-        //this.element.querySelector('.Post-header').appendChild(a)
-        
-       //a=$(a)
-       
+
         return a;
-        //console.log(a)
-       // console.log(items)
-      //  items.push(a)
-      //  console.log(a)
-        //this.content[0]
       }
       )
       
-   //   app.catalog={
-    //    view:function(){
-   //       return <div class="catalogDIV">{content}</div>
-   //     }
-      
-  //    }
-
-  //    app.catalog.content=this.catalog.content;
-
-  //console.log('啊吧啊吧')
-
-
-    // console.log(this)
-    
-     //console.log(CommentPost.prototype)
-
-
-
-     //return items; 
-
 
     }); 
 
@@ -149,7 +115,7 @@ app.initializers.add('mypost', () => {
       // if(app.current.data.stream.posts().filter((w)=>{return w.attributes.number==this.attrs.post.data.attributes.number})[0])app.current.data.stream.posts().filter((w)=>{return w.attributes.number==this.attrs.post.data.attributes.number})[0].catalog=this.catalog
 
       if(!app.current)return;
-      
+      //这一段时把滚动元素添加页面上
         try{
             
             
@@ -181,6 +147,7 @@ app.initializers.add('mypost', () => {
   
       override(DiscussionPageResolver.prototype, 'onmatch', function (original, args, requestedPath, route){
         
+      //这一端是为了阻止有id时flarum原生的滚动
       if (app.current.matches(DiscussionPage) && this.canonicalizeDiscussionSlug(args.id) === this.canonicalizeDiscussionSlug(m.route.param('id'))) {
         // By default, the first post number of any discussion is 1
        if(args.near!=m.route.param('near') || window.location.href.indexOf('#')==-1 )DiscussionPageResolver.scrollToPostNumber = args.near || 1;//在贴在路由不变情况下不要滚回开头
@@ -188,8 +155,6 @@ app.initializers.add('mypost', () => {
       }
       
       
-     // console.log('original DicussionPageResolver')
-      //console.log(this.__proto__.__proto__.onmatch)
       return this.__proto__.__proto__.onmatch.call(this, args, requestedPath, route);
     })
 
@@ -274,10 +239,10 @@ app.initializers.add('mypost', () => {
           
           setTimeout(()=>{
           window.location.hash  =   '#'+hash;
-          },1000)
+          },300)
           setTimeout(()=>{
           window.location.hash  =   '#'+hash;
-          },2000)
+          },1000)
           }
           
           
@@ -317,13 +282,13 @@ app.initializers.add('mypost', () => {
   
   
 
-
+    //这一段开始是给帖子加进度条
     window.updateCatalogTop=()=>{
     if(!app?.current?.data?.stream?.index)return;
      let footer = document.querySelector( '.PostStream-item[data-index="'+Math.floor(app?.current?.data?.stream?.index-1) +'"]'+" li.item-progress")
      app.current.data.stream.progress=Math.floor((app.current.data.stream.index-Math.floor(app.current.data.stream.index))*100) 
      if(!footer)return;
-     footer.innerText=app.current.data.stream.progress+'%'  
+     footer.innerText= Math.floor(app.current.data.stream.progress+ app.current.data.stream.percentScreenPost/3)+'%'  
       m.redraw();
       
      
@@ -350,12 +315,25 @@ app.initializers.add('mypost', () => {
        
          if(!app?.current?.data?.stream?.index)return;
          
-
+         //自动关灯
+         let classList=document.querySelector(".DiscussionPage-discussion").className.split(' ');
+         
+       if(app?.current?.data?.stream?.index>1.2) {
+           
+           if(classList.indexOf('streamNotFirst')==-1)classList.push('streamNotFirst')
+       }else{
+           
+           classList=classList.filter((e)=>e!='streamNotFirst')
+       }
+       
+       document.querySelector(".DiscussionPage-discussion").className=classList.join(' ')
+       
+       //升级阅读进度
          var element1=document.querySelector(
          '.PostStream-item[data-index="'+Math.floor(app.current.data.stream.index-1) +'"]'
         )
         
-        app.current.data.stream.percentScreenPost = window.innerHeight/element1.scrollHeight*100-2;
+        app.current.data.stream.percentScreenPost = (window.innerHeight-40)/element1.scrollHeight*100-2;
         
  
         var element2=document.querySelector(
@@ -363,10 +341,17 @@ app.initializers.add('mypost', () => {
         )
         if(element1==element2 || !element1)return;
         
-        if(element1.scrollHeight<window.innerHeight || app.current.data.stream.progress>100-app.current.data.stream.percentScreenPost || app.current.data.stream.progress<app.current.data.stream.percentScreenPost){
+        
+        if(
+        element1.scrollHeight<window.innerHeight ||
+        app.current.data.stream.progress>100-app.current.data.stream.percentScreenPost || 
+        app.current.data.stream.progress<app.current.data.stream.percentScreenPost
+        ){
+            
             //不需要进度条的帖子
             if( !element2)return;
-             element2.className=element2.className.replaceAll('PostStreamCurrent','')
+            
+            element2.className=element2.className.replaceAll('PostStreamCurrent','')
             
         }else{
       
@@ -394,18 +379,7 @@ app.initializers.add('mypost', () => {
      });
   
   
-  /*
-   extend(PostStream.prototype, 'updateScrubber', function () {
-       let top =window.pageYOffset;
-      // let marginTop=this.getMarginTop();
-       let viewportTop = top ;
-        let visibleTop = Math.max(0, viewportTop - top);
-        let $this = $(this);
-         let height = $this.outerHeight(true);
-        indexFromViewPort = parseFloat($this.data('index')) + (visibleTop+window.innerHeight/2) / height;
-           this.stream.index = indexFromViewPort !== null ? indexFromViewPort + 1 : this.stream.count();
-  })*/
-  
+
 
   
 })

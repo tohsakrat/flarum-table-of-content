@@ -6,9 +6,10 @@ import DiscussionPageResolver from 'flarum/forum/resolvers/DiscussionPageResolve
 import PostStreamScrubber from 'flarum/forum/components/PostStreamScrubber';
 import PostStream from 'flarum/forum/components/PostStream';
 
-app.initializers.add('mypost', () => {
-//console.log(12345)
+app.initializers.add('table-of-content', () => {
+
   extend(CommentPost.prototype, 'oncreate', function () {
+      if(!document.querySelector('.PostStream') )return;
     //console.log(this);
     let clearPunctuation=(str)=>{;
       let reg=new RegExp( /[\x21-\x2f\x3a-\x40\x5b-\x60\x7B-\x7F]/)
@@ -16,7 +17,7 @@ app.initializers.add('mypost', () => {
   }
 
  //这一段母的是把页面内指向同一个discussion的链接改为跳转到楼层，这样就不用重载整个页面
-  let inPageLink=Array.prototype.slice.call(this.element.querySelectorAll('a'))
+  let inPageLink=Array.prototype.slice.call(this.element.querySelectorAll('.Post-body a'))
   
      inPageLink.forEach((e)=>{
       let curDiscussionRoute=window.location.href.replace("https://",'').split('/').splice(0,3).join('/');
@@ -25,7 +26,7 @@ app.initializers.add('mypost', () => {
         let goTo=e.href.split('/')[5].split('#')[0];
         console.log('点击了链接,即将前往楼层'+goTo);
         w.preventDefault();  
-        if(Math.floor(app.current.data.stream.number)==goTo){
+        if(window.location.href.split('/')[5].split('#')[0]==goTo){
           //如果和当前所在楼层相同，就不要滚动了
           console.log('当前所在楼层和目标楼层相同，不滚动');
           window.location.hash  =  '#'+ e.href.split('#')[1];
@@ -33,9 +34,20 @@ app.initializers.add('mypost', () => {
         app.current.data.stream.goToNumber(goTo).then(()=>{
                 console.log('goto完毕');
               
-    		  if(e.href.split('/')[5])setTimeout(()=>{
-            window.location.hash  =  '#'+ e.href.split('#')[1];
-            setTimeout(()=>{ m.redraw();},100)
+    		  if(e.href.split('/')[5])setTimeout(
+    		  ()=>{
+    		      //多延迟下放图片加载下
+                    window.location.hash  =  '#'+ e.href.split('#')[1];
+                    setTimeout(()=>{ m.redraw();
+                     setTimeout(
+                         //再尝试一次，以防万一
+                         ()=>{
+                              window.location.hash  =  '#'+ e.href.split('#')[1];
+                         },500
+                    )
+                        
+                        
+                    },100)
     		  },500)}
       	)
       return false;
@@ -49,7 +61,7 @@ app.initializers.add('mypost', () => {
  //这一段开始，是生成目录
 
  //先把所有标题找出来
-  let elements1=Array.prototype.slice.call(this.element.querySelectorAll('.Post-body :is(h1, h2, h3, h4, h5, h6)'))
+  let elements1=Array.prototype.slice.call(this.element.querySelectorAll('.Post-body :is(h1, h2, h3, h4, h5, h6,.div-anchor)'))
   
   elements1.forEach((e,i)=>{
     //这一段是给标题加上锚点，以及给锚点加上id
@@ -59,9 +71,18 @@ app.initializers.add('mypost', () => {
       anchor = anchor.parentNode
       if(anchor.dataset.number)break
     }
+    
+    
     e.innerHTML='<span class="title-anchor"></span>'+ '<span class="title-sub-anchor">'+ e.innerHTML+'</span>'; 
-   //e.id=
-    e.dataset.id=anchor.dataset.number+'-'+clearPunctuation(e.innerText)+'-'+(elements1.map(k=>clearPunctuation(k.innerText)).filter(b=>b==clearPunctuation(e.innerText)).length==1?'':i);;
+  //加个点击引导
+    let icon = document.createElement('i');
+    icon.className='icon fas fa-up-right-from-square Button-icon';
+    e.appendChild(icon);
+    e.dataset.id=   anchor.dataset.number+'-'+clearPunctuation(e.innerText)+'-'+(elements1.map(k=>clearPunctuation(k.innerText)).filter(b=>b==clearPunctuation(e.innerText)).length==1?'':i);
+    
+    e.dataset.id= e.dataset.id.length > 10 ? e.dataset.id.substring(0, 10) : e.dataset.id
+    e.dataset.id=encodeURI(e.dataset.id)
+
     e.className+=' title-has-anchor';
     e.querySelector('.title-anchor').id = e.dataset.id;
     e.querySelector('.title-sub-anchor').id = e.dataset.id;
@@ -71,7 +92,9 @@ app.initializers.add('mypost', () => {
   //这一段是生成目录
   this.catalog={}
   this.catalog.id=this.attrs.post.data.id
-  app.current.data.stream.posts().find(u=>u.data.id== this.catalog.id).catalog=this.catalog//把目录加到stream数据模型对应的post里面去
+  app.current.data.stream.posts().find(u=>u?.data?.id== this.catalog.id).catalog=this.catalog
+  //把目录加到stream数据模型对应的post里面去
+  
   this.catalog.elements=elements1
 
   this.catalog.content=this.catalog.elements.map(
@@ -80,7 +103,11 @@ app.initializers.add('mypost', () => {
         let isAnchor=Array(e.classList).map(e=>e.value).indexOf('sub-anchor')!=-1
         let id=isAnchor? e.id : e.dataset.id
         let link= window.location.origin+app.route.discussion(app.current.data.discussion,this.attrs.post.data.attributes.number)+'#'+id;
-       
+        
+        e.addEventListener('click',()=>{
+            window.copyTextToClipboard('* ['+e.innerText+']('+link+')')
+        });//点击元素，复制链接
+        
         let a=<p> <a
         href={link}
         target='_self'
@@ -91,10 +118,11 @@ app.initializers.add('mypost', () => {
         onclick={(u)=>{  
 
           u.preventDefault();
-           app.current.data.stream.goToNumber(a.dom.dataset.number).then(()=>{
+           app.current.data.stream.goToNumber(this.attrs.post.data.attributes.number).then(()=>{
               setTimeout(()=>{
                 //console.log(a)
-              window.location.hash  =  '#'+ id;
+              window.location.hash  =  '#'+  id;
+                
                setTimeout(()=>{ m.redraw();},100)
             },500)}
             )
@@ -115,22 +143,42 @@ app.initializers.add('mypost', () => {
       // if(app.current.data.stream.posts().filter((w)=>{return w.attributes.number==this.attrs.post.data.attributes.number})[0])app.current.data.stream.posts().filter((w)=>{return w.attributes.number==this.attrs.post.data.attributes.number})[0].catalog=this.catalog
 
       if(!app.current)return;
-      //这一段时把滚动元素添加页面上
+      //这一段是把滚动元素添加页面上
         try{
             
             
-         if(app.current?.data?.stream?.posts().find(u=>u.data?.id==app.current.data.stream.posts()[Math.floor(app.current.data.stream.index-app.current.data.stream.visibleStart)-1>0?Math.floor(app.current.data.stream.index-app.current.data.stream.visibleStart)-1:0].data?.id)
-        .catalog?.content.length) vnode.children.push(
-            <div class='catalog-icon-mobile'
-            onclick={()=>{document.querySelector('.PostStreamScrubber.Dropdown.App-titleControl>button.Button.Dropdown-toggle:first-child').click()}}
-            ></div>
-        )
+         if(app.current?.data?.stream?.posts().find(
+                 u=>
+                    u?.data?.id==app?.current?.data?.stream?.posts()[
+                     Math.floor(app.current.data.stream.index-app.current.data.stream.visibleStart)-1>0?Math.floor(app.current.data.stream.index-app.current.data.stream.visibleStart)-1:0]?.data?.id
+                 )?.catalog?.content.length
+             ){ 
+                    vnode.children.push(
+                    <div class='catalog-icon-mobile'
+                    onclick={()=>{document.querySelector('.PostStreamScrubber.Dropdown.App-titleControl>button.Button.Dropdown-toggle:first-child').click()}}
+                    ></div>
+                    )
+            
+            }
         
-        vnode.children.push(<div class='catalog-top'>
-            {app?.current?.data?.stream?.posts().find(u=>u?.data?.id==app.current?.data?.stream?.posts()[Math.floor(app.current?.data?.stream?.index-app.current?.data?.stream?.visibleStart)-1>0?Math.floor(app.current?.data?.stream?.index-app.current?.data?.stream?.visibleStart)-1:0].data?.id)
-           .catalog?.content}
-
-        </div>)
+        vnode.children.push(
+            <div class='catalog-top'>
+                {
+                    //确认到底要不要目录
+                     app.current.data.stream.progress&& app.current.data.stream.currentPostElement&&
+                    (app.current.data.stream.progress>100-app.current.data.stream.percentScreenPost||
+                    app.current.data.stream.currentPostElement.scrollHeight<window.innerHeight)
+                    ?
+                    ""
+                    :
+                    app?.current?.data?.stream?.posts().find(
+                    u=>u?.data?.id==app.current?.data?.stream?.posts()[Math.floor(app.current?.data?.stream?.index-app.current?.data?.stream?.visibleStart)-1>0?Math.floor(app.current?.data?.stream?.index-app.current?.data?.stream?.visibleStart)-1:0]?.data?.id)
+                   ?.catalog?.content
+                    
+                }
+    
+            </div>
+        )
             
             
         }catch (e){
@@ -178,11 +226,12 @@ app.initializers.add('mypost', () => {
      extend(DiscussionPage.prototype, 'show', function (discussion){
          
          if(window.location.href.indexOf('#')!=-1 && window.location.href.split('#').length==2){
+            let hash= window.location.hash;
           setTimeout(()=>{
-          window.location.hash  =   '#'+hash;
+          window.location.hash  =   hash;
           },250)
           setTimeout(()=>{
-          window.location.hash  =   '#'+hash;
+          window.location.hash  =   hash;
           },500)
           }
          
@@ -329,17 +378,17 @@ app.initializers.add('mypost', () => {
        document.querySelector(".DiscussionPage-discussion").className=classList.join(' ')
        
        //升级阅读进度
-         var element1=document.querySelector(
+         let element1=document.querySelector(
          '.PostStream-item[data-index="'+Math.floor(app.current.data.stream.index-1) +'"]'
         )
         
-        app.current.data.stream.percentScreenPost = (window.innerHeight-40)/element1.scrollHeight*100-2;
-        
+        app.current.data.stream.percentScreenPost = (window.innerHeight-100)/element1.scrollHeight*100-2;
+        app.current.data.stream.currentPostElement=element1;
  
-        var element2=document.querySelector(
+        let element2=document.querySelector(
          '.PostStreamCurrent'
         )
-        if(element1==element2 || !element1)return;
+        if(element1==element2 || (!element1))return;
         
         
         if(
@@ -356,9 +405,9 @@ app.initializers.add('mypost', () => {
         }else{
       
         
-         element1.className+=' PostStreamCurrent'
-        if(!element2)return;
-        element2.className=element2.className.replaceAll('PostStreamCurrent','')
+             element1.className+=' PostStreamCurrent'
+            if(!element2)return;
+            element2.className=element2.className.replaceAll('PostStreamCurrent','')
         
         }
      }

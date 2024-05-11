@@ -1,3 +1,9 @@
+
+.CommentPost .Post-actions {
+    width: fit-content!important;
+}
+
+
 @keyframes fadeOutLeft {
     0% {
         opacity: 1
@@ -78,20 +84,57 @@
     transform: scale(-1,1);
   }
 }
+ .fa-up-right-from-square:before{
+     content:'\f35d'
+ }
+a[data-tag='DIV']:before {
+    content: 'anchor';
+    content: "\f608";
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+}
+.title-has-anchor {
+    display: flex;
+    align-items: center;
+}
+.div-anchor{
+    justify-content:center;
+}
+.title-has-anchor:hover i {
+    animation: tada 0.5s 1;
+    color: var(--link-color);
+    transition: 0.5s;
+    text-shadow: 0 0 5px;
+}
+.title-has-anchor i {
+    vertical-align: middle;
+    color: var(--control-bg);
+    font-size: inherit;
+    /* letter-spacing: 20px; */
+    margin-left: 0.5em;
+}
 
 
-.Post-body :is(h1,h2,h3,h4,h5,h6):before {
-    content: '';
-    display: inline-block;
-    width: 1.5em;
-    height: 0.5em;
-    background: linear-gradient(90deg, rgba(0, 147, 233,0.8) 0%, rgba(128, 208, 199,0.8) 100%);
-    /* filter: brightness(1.5); */
-    opacity: .25;
-    position: absolute;
-    /* bottom: 0px; */
-    mix-blend-mode: color;
-    z-index:-1;
+
+.Post-body :is(h1,h2,h3,h4,h5,h6){
+    position: relative;
+    &:before {
+        content: '';
+        display: inline-block;
+        width: 1.5em;
+        height: 50%;
+        background: linear-gradient(90deg, rgba(0, 147, 233,0.8) 0%, rgba(128, 208, 199,0.8) 100%);
+        /* filter: brightness(1.5); */
+        opacity: .25;
+        position: absolute;
+        /* bottom: 0px; */
+        mix-blend-mode: color;
+        z-index:-1;
+        position: absolute;
+        top: 0;
+        left: -0.5em;
+    }
+    
 }
 
 .title-anchor:target+.title-sub-anchor:before {
@@ -294,16 +337,21 @@ div#app.panePinned .DiscussionPage-list+.DiscussionPage-discussion .catalog-top{
 
 
 @media @phone {
-.catalog-icon-mobile:before {
-animation: 2s 10 ease-in-out breath;
-    content: '\f02d';
-    font-family: 'Font Awesome 5 Free';
-    font-weight: 900;
-}
+    .catalog-icon-mobile:before {
+        animation: 2s 10 ease-in-out breath;
+        content: "";
+        font-weight: 900;
+        display: inline-block;
+        width: 1em;
+        height: 1em;
+        background: url('data:image/svg+xml,<svg width="1.2em" xmlns="http://www.w3.org/2000/svg" height="1.2em" viewBox="0 0 24 24" class="ZDI ZDI--Catalog24" fill="currentColor"><path d="M10 5a1 1 0 011-1h10a1 1 0 110 2H11a1 1 0 01-1-1zm4 6a1 1 0 100 2h7a1 1 0 100-2h-7zm0 7a1 1 0 100 2h7a1 1 0 100-2h-7zm-8.335.25a.915.915 0 01-.915-.915V12.75H10a.75.75 0 000-1.5H4.75V6.665c0-.505.41-.915.915-.915H7a.75.75 0 000-1.5H5.665A2.415 2.415 0 003.25 6.665v10.67a2.415 2.415 0 002.415 2.415H10a.75.75 0 000-1.5H5.665z"></path></svg>');
+        filter: invert(1);
+    }
+
 .catalog-icon-mobile {
     display: inline-block;
     opacity: .75;
-    transform: translate(3.5em, -1.8em) scale(-1, 1);
+    transform: translate(3.5em, -1.8em) ;
 }
     .PostStreamScrubber.App-titleControl .Scrubber {
         margin-left: 55vw;

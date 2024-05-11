@@ -3,7 +3,7 @@
 /*
  * This file is part of tohsakarat/table-of-content
  *
- * Copyright (c) 2022 Tomás Romero.
+ * Copyright (c) 2022 Tom ás Romero.
  *
  * For the full copyright and license information, please view the LICENSE.md
  * file that was distributed with this source code.
@@ -16,8 +16,10 @@ return [
         ->js(__DIR__.'/js/dist/forum.js')
         ->css(__DIR__ . '/less/forum.less'),
         
-	
-	    (new Extend\Formatter)
+    new Extend\Locales(__DIR__ . '/locale'),
+
+
+    (new Extend\Formatter)
         ->configure(function (Configurator $config) {
             $config->BBCodes->addCustom(
         '[anchor="{TEXT}"]',
@@ -25,6 +27,6 @@ return [
         <span id={TEXT} class="anchor"></span> 
         <span id={TEXT} class="sub-anchor">{TEXT}</span> 
          </div>'
-    );
-        })
+        );
+    })
 ];

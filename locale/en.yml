@@ -2,4 +2,6 @@ tohsakarat-table-of-content:
   admin:
   forum:
     settings:
-        copied: share link copy done(markdown)！
+
+        copied: copied！
+        copyfailed: copy failed！

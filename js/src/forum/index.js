@@ -8,6 +8,36 @@ import PostStream from 'flarum/forum/components/PostStream';
 
 app.initializers.add('table-of-content', () => {
 
+
+        if(!window.copyTextToClipboard)window.copyTextToClipboard=function(text) {
+            let fallbackCopyTextToClipboard = (text) => {
+              var textArea = document.createElement('textarea');
+              textArea.value = text;
+            
+              // Avoid scrolling to bottom
+              textArea.style.top = '0';
+              textArea.style.left = '0';
+              textArea.style.position = 'fixed';
+            
+              document.body.appendChild(textArea);
+              textArea.focus();
+              textArea.select();
+            
+              document.execCommand('copy');
+            
+              document.body.removeChild(textArea);
+            };
+            if (!navigator.clipboard) {
+                fallbackCopyTextToClipboard(text);
+                return;
+            }
+            navigator.clipboard.writeText(text).then(function() {
+                alert(app.translator.trans('tohsakarat-table-of-content.forum.settings.copied')+text);
+            }, function(err) {
+                alert('tohsakarat-table-of-content.forum.settings.copyfailed '+text);
+            });
+        }
+       
   extend(CommentPost.prototype, 'refreshContent', function () {
       if(!document.querySelector('.PostStream') )return;
     //console.log(this);

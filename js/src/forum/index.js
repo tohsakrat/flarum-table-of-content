@@ -8,7 +8,7 @@ import PostStream from 'flarum/forum/components/PostStream';
 
 app.initializers.add('table-of-content', () => {
 
-  extend(CommentPost.prototype, 'oncreate', function () {
+  extend(CommentPost.prototype, 'refreshContent', function () {
       if(!document.querySelector('.PostStream') )return;
     //console.log(this);
     let clearPunctuation=(str)=>{;
@@ -61,8 +61,8 @@ app.initializers.add('table-of-content', () => {
  //这一段开始，是生成目录
 
  //先把所有标题找出来
-  let elements1=Array.prototype.slice.call(this.element.querySelectorAll('.Post-body :is(h1, h2, h3, h4, h5, h6,.div-anchor)'))
-  
+  let elements1=Array.prototype.slice.call(this.element.querySelectorAll('.Post-body :is(h1, h2, h3, h4, h5, h6,.div-anchor):not([data-id])'))
+  if(!elements1.length)return;
   elements1.forEach((e,i)=>{
     //这一段是给标题加上锚点，以及给锚点加上id
     //不直让标题本身作为滚动id是因为，这样不会让标题本身滚动到屏幕中间，而是顶部

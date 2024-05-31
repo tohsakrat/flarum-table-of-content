@@ -93,10 +93,9 @@ a[data-tag='DIV']:before {
     font-family: 'Font Awesome 5 Free';
     font-weight: 900;
 }
-.title-has-anchor {
-    display: flex;
-    align-items: center;
-}
+
+
+
 .div-anchor{
     justify-content:center;
 }
@@ -110,7 +109,7 @@ a[data-tag='DIV']:before {
     vertical-align: middle;
     color: var(--control-bg);
     font-size: inherit;
-    /* letter-spacing: 20px; */
+      float: right;
     margin-left: 0.5em;
 }
 
@@ -141,15 +140,14 @@ a[data-tag='DIV']:before {
     content: '';
     display: inline-block;
     width: 1.5em;
-    height: 0.5em;
+    height: 50%;
     background: linear-gradient(to right, #ff5f6d, #ffc371);
     opacity: 1;
     position: absolute;
     mix-blend-mode: color;
     z-index: -1;
-    /* left: -0.5em; */
-    /* transition: 1s!important; */
     animation: 5s flash ease-in-out infinite;
+    left: -0.5em;
 }
 @media @desktop-hd {
     
